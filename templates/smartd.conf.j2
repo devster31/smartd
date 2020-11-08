@@ -26,7 +26,7 @@
 	{%- for option in config.non_smart_settings | d(smartd_default_non_smart_settings) %}
 		{{- " -e " ~ option ~ " \\\n"}}
 	{%- endfor %}
-	{%- if config.test_schedule | d(smartd_default_test_schedule) %}
+	{%- if config.test_schedule %}
 		{{- " -s " ~ config.test_schedule | d(smartd_default_test_schedule) ~ " \\\n"}}
 	{%- endif %}
 	{%- if "mail_recipients" in config or smartd_default_mail_recipients %}
