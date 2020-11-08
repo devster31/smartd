@@ -14,10 +14,8 @@
 	{%- if 'ata_offline_testing' in config %}
 		{{- " -o " }}{{ config.ata_offline_testing -}}
 	{%- endif %}
-	{{- " -S " }}{% if config.attribute_autosave | d(smartd_default_attribute_autosave) %}
-		{{- "on" -}}
-	{%- else %}
-		{{- "off" -}}
+	{%- if 'attribute_autosave' in config %}
+		{{- " -S " }}{{- config.attribute_autosave | d(smartd_default_attribute_autosave) -}}
 	{%- endif %}
 	{%- if config.check_health_return_status | d(smartd_default_check_health_return_status) %}
 		{{- " -H" -}}
