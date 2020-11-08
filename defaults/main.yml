@@ -27,4 +27,21 @@ smartd_default_temperature_report_diff: 10
 smartd_default_temperature_report_info: 45
 smartd_default_temperature_report_crit: 50
 smartd_default_preset_mode: use
+
+smartd_config_paths_map:
+  CentOS: /etc/smartmontools/smartd.conf
+  Fedora: /etc/smartmontools/smartd.conf
+  FreeBSD: /usr/local/etc/smartd.conf
+
+smartd_config_path: "{{ smartd_config_paths_map[ansible_distribution] | d('/etc/smartd.conf') }}"
+
+smartd_service_name_map:
+  FreeBSD: smartd
+
+smartd_service_name: "{{ smartd_service_name_map[ansible_distribution] | d('smartd.service') }}"
+
+smartd_file_group_map:
+  FreeBSD: wheel
+
+smartd_file_group: "{{ smartd_file_group_map[ansible_distribution] | d('root') }}"
 ...

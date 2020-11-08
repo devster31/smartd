@@ -1,11 +1,4 @@
 ---
-# Check vars/main.yml to set distro-specific config file location
-- name: Set the smartd configuration file path
-  set_fact:
-    smartd_config_path: "{{ smartd_possible_config_paths[ansible_distribution] | default(smartd_possible_config_paths.default) }}"
-    smartd_file_group: "{{ smartd_possible_file_group[ansible_distribution] | default(smartd_possible_file_group.default) }}"
-    smartd_service_name: "{{ smartd_service_possible_name[ansible_distribution] | default(smartd_service_possible_name.default) }}"
-
 - name: Install smartmontools
   package:
     name: smartmontools
