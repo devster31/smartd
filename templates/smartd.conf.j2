@@ -1,16 +1,16 @@
 # {{ ansible_managed }}
 
-{% for name,config in smartd_devices.items() | d([]) %}
+{% for name, config in smartd_devices.items() | d([]) %}
 	{{- name -}}
-	{%- if config.type|d(smartd_default_type) != 'auto' %}
-        {{- " -d " }}{{ config.type|d(smartd_default_type) -}}
-    {%- endif %}
-    {%- if 'never' not in config.nocheck|d(smartd_default_nocheck) %}
-	    {{- " -n " }}{{ config.nocheck|d(smartd_default_nocheck) -}}
-    {%- endif %}
-    {%- if 'normal' != config.check_type|d(smartd_default_check_type) %}
-	    {{- " -T " }}{{ config.check_type | d(smartd_default_check_type) -}}
-    {%- endif %}
+	{%- if config.type | d(smartd_default_type) != 'auto' %}
+		{{- " -d " }}{{ config.type | d(smartd_default_type) -}}
+	{%- endif %}
+	{%- if 'never' not in config.nocheck | d(smartd_default_nocheck) %}
+		{{- " -n " }}{{ config.nocheck | d(smartd_default_nocheck) -}}
+	{%- endif %}
+	{%- if 'normal' != config.check_type | d(smartd_default_check_type) %}
+		{{- " -T " }}{{ config.check_type | d(smartd_default_check_type) -}}
+	{%- endif %}
 	{%- if 'ata_offline_testing' in config %}
 		{{- " -o " }}{{ config.ata_offline_testing -}}
 	{%- endif %}
@@ -18,7 +18,7 @@
 		{{- " -S " }}{{- config.attribute_autosave | d(smartd_default_attribute_autosave) -}}
 	{%- endif %}
 	{%- if config.check_health_return_status | d(smartd_default_check_health_return_status) %}
-		{{- " -H" -}}
+		{{- " -H" -}}{{' \\\n'}}
 	{%- endif %}
 	{%- for error_type in config.report_error_types | d(smartd_default_report_error_types) %}
 		{{- " -l " }}{{ error_type -}}{{' \\\n'}}
@@ -30,7 +30,7 @@
 		{{- " -s " }}{{ config.test_schedule | d(smartd_default_test_schedule) -}}{{' \\\n'}}
 	{%- endif %}
 	{%- if 'mail_recipients' in config or smartd_default_mail_recipients %}
-        {{- " -m " }}{{ config.mail_recipients | d(smartd_default_mail_recipients) | join(",") -}}{{' \\\n'}}
+		{{- " -m " }}{{ config.mail_recipients | d(smartd_default_mail_recipients) | join(",") -}}{{' \\\n'}}
 		{{- " -M " }}{{ config.mail_frequency | d(smartd_default_mail_frequency) -}}{{' \\\n'}}
 		{%- if config.mail_script | d(smartd_default_mail_script) %}
 			{{- " -M exec " }}{{ config.mail_script | d(smartd_default_mail_script) -}}{{' \\\n'}}
@@ -54,21 +54,21 @@
 	{%- for id in config.report_raw_ids | d([]) %}
 		{{- " -R " }}{{ id -}}{{' \\\n'}}
 	{%- endfor %}
-    {%- if '197' != config.ata_pending_id|d(smartd_default_ata_pending_id) %}
-	    {{- " -C " }}{{ config.ata_pending_id | d(smartd_default_ata_pending_id) -}}
-    {%- endif %}
-    {%- if '198' != config.ata_uncorrectable_id|d(smartd_default_ata_uncorrectable_id) %}
-	    {{- " -U " }}{{ config.ata_uncorrectable_id | d(smartd_default_ata_uncorrectable_id) -}}
-    {%- endif %}
-    {{- " -W " }}{{ config.temperature_report_diff | d(smartd_default_temperature_report_diff) }}{{ "," }}{{ config.temperature_report_info | d(smartd_default_temperature_report_info) }}{{ "," }}{{ config.temperature_report_crit | d(smartd_default_temperature_report_crit) -}}
-    {%- for bug in config.firmware_bugs | d([]) %}
+	{%- if '197' != config.ata_pending_id|d(smartd_default_ata_pending_id) %}
+		{{- " -C " }}{{ config.ata_pending_id | d(smartd_default_ata_pending_id) -}}
+	{%- endif %}
+	{%- if '198' != config.ata_uncorrectable_id|d(smartd_default_ata_uncorrectable_id) %}
+		{{- " -U " }}{{ config.ata_uncorrectable_id | d(smartd_default_ata_uncorrectable_id) -}}
+	{%- endif %}
+	{{- " -W " }}{{ config.temperature_report_diff | d(smartd_default_temperature_report_diff) }}{{ "," }}{{ config.temperature_report_info | d(smartd_default_temperature_report_info) }}{{ "," }}{{ config.temperature_report_crit | d(smartd_default_temperature_report_crit) -}}
+	{%- for bug in config.firmware_bugs | d([]) %}
 		{{- " -F " }}{{ bug -}}{{' \\\n'}}
 	{%- endfor %}
-	{%- for format in config.vendor_formats | d([]) %}{{ " -v " }}
-		{{- format -}}{{' \\\n'}}
+	{%- for format in config.vendor_formats | d([]) %}
+		{{- ' \\\n' if loop.first }}{{- " -v " ~ format -}}{{ ' \\\n' if not loop.last }}
 	{%- endfor %}
-    {%- if 'use' != config.preset_mode|d(smartd_default_preset_mode) %}
-	    {{- " -P " }}{{ config.preset_mode | d(smartd_default_preset_mode) -}}
-    {%- endif %}
-    {{'\n\n'}}
+	{%- if 'use' != config.preset_mode|d(smartd_default_preset_mode) %}
+		{{- " -P " }}{{ config.preset_mode | d(smartd_default_preset_mode) -}}
+	{%- endif %}
+	{{'\n\n'}}
 {% endfor %}
