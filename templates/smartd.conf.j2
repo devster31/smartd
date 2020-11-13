@@ -1,6 +1,24 @@
 # {{ ansible_managed }}
-{% for config in smartd_devices | d([]) %}
-	{{- config.name -}}
+{% set elements = [] %}
+{% set devs = smartd_devices | length %}
+{% if smartd_devices is mapping %}
+	{%- set names = smartd_devices.keys() | list | d([]) %}
+	{%- set configs = smartd_devices.values() | list | d([]) %}
+	{%- for i in range(devs) %}
+		{{- elements.append({'name':names[i], 'config':configs[i]}) -}}
+	{%- endfor %}
+{% else %}
+	{%- set names = smartd_devices | map(attribute='name') | list | d([]) %}
+	{%- set configs = smartd_devices | map(attribute='config') | list | d([]) %}
+	{%- for i in range(n_el) %}
+		{{- elements.append({'name':names[i], 'config':configs[i]}) -}}
+	{%- endfor %}
+{% endif %}
+
+{% for c in elements | d([]) %}
+{% set name = c.name %}
+{% set config = c.config %}
+	{{- name -}}
 	{%- if config.type | d(smartd_default_type) != "auto" %}
 		{{- " -d " ~ config.type | d(smartd_default_type) -}}
 	{%- endif %}
@@ -25,7 +43,7 @@
 	{%- for option in config.non_smart_settings | d(smartd_default_non_smart_settings) %}
 		{{- " -e " ~ option ~ " \\\n"}}
 	{%- endfor %}
-	{%- if config.test_schedule %}
+	{%- if "test_schedule" in config %}
 		{{- " -s " ~ config.test_schedule | d(smartd_default_test_schedule) ~ " \\\n"}}
 	{%- endif %}
 	{%- if "mail_recipients" in config or smartd_default_mail_recipients %}
@@ -93,5 +111,6 @@
 	{%- if "use" != config.preset_mode|d(smartd_default_preset_mode) %}
 		{{- " -P " ~ config.preset_mode | d(smartd_default_preset_mode) -}}
 	{%- endif %}
-	{{"\n\n"}}
+
+
 {% endfor %}
