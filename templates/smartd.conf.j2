@@ -69,8 +69,23 @@
 	{%- if '198' != config.ata_uncorrectable_id|d(smartd_default_ata_uncorrectable_id) %}
 		{{- " -U " }}{{ config.ata_uncorrectable_id | d(smartd_default_ata_uncorrectable_id) -}}
 	{%- endif %}
-	{{- " -W " }}{{ config.temperature_report_diff | d(smartd_default_temperature_report_diff) }}{{ "," }}{{ config.temperature_report_info | d(smartd_default_temperature_report_info) }}{{ "," }}{{ config.temperature_report_crit | d(smartd_default_temperature_report_crit) -}}
-	{%- for bug in config.firmware_bugs | d([]) %}
+	{%- if "temperature_report_diff" in config or
+		   "temperature_report_info" in config or
+		   "temperature_report_crit" in config %}
+		{%- set temps = {} -%}
+		{%- if "temperature_report_crit" in config -%}
+			{%- set _ = temps.update({"diff": config.temperature_report_diff | d(smartd_default_temperature_report_diff)}) %}
+			{%- set _ = temps.update({"info": config.temperature_report_info | d(smartd_default_temperature_report_info)}) %}
+			{%- set _ = temps.update({"crit": config.temperature_report_crit | d(smartd_default_temperature_report_crit)}) %}
+		{%- elif "temperature_report_info" in config -%}
+			{%- set _ = temps.update({"diff": config.temperature_report_diff | d(smartd_default_temperature_report_diff)}) %}
+			{%- set _ = temps.update({"info": config.temperature_report_info | d(smartd_default_temperature_report_info)}) %}
+		{%- elif "temperature_report_diff" in config -%}
+			{%- set _ = temps.update({"diff": config.temperature_report_diff | d(smartd_default_temperature_report_diff)}) %}
+		{%- endif -%}
+		{{- " -W " ~ temps.values() | join(",") -}}
+	{%- endif %}
+    {%- for bug in config.firmware_bugs | d([]) %}
 		{{- " -F " }}{{ bug -}}{{' \\\n'}}
 	{%- endfor %}
 	{%- for format in config.vendor_formats | d([]) %}
