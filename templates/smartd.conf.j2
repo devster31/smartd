@@ -46,10 +46,12 @@
 	{%- if config.report_ata_failure | d(smartd_default_report_ata_failure) %}
 		{{- " -f" -}}
 	{%- endif %}
-	{%- if config.report_ata_prefail | d(smartd_default_report_ata_prefail) %}
+	{%- if config.report_ata_prefail | d(smartd_default_report_ata_prefail)
+		and config.report_ata_usage | d(smartd_default_report_ata_usage) %}
+		{{- " -t" -}}
+	{%- elif config.report_ata_prefail | d(smartd_default_report_ata_prefail) %}
 		{{- " -p" -}}
-	{%- endif %}
-	{%- if config.report_ata_usage | d(smartd_default_report_ata_usage) %}
+	{%- elif config.report_ata_usage | d(smartd_default_report_ata_usage) %}
 		{{- " -u" -}}
 	{%- endif %}
 	{%- for id in config.ignore_ata_failure_ids | d([]) %}
