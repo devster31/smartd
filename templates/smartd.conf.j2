@@ -1,7 +1,6 @@
 # {{ ansible_managed }}
-
-{% for name, config in smartd_devices.items() | d([]) %}
-	{{- name -}}
+{% for config in smartd_devices | d([]) %}
+	{{- config.name -}}
 	{%- if config.type | d(smartd_default_type) != "auto" %}
 		{{- " -d " ~ config.type | d(smartd_default_type) -}}
 	{%- endif %}
